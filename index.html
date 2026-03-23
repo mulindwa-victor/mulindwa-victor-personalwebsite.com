@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mulindwa Victor</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --gold: #F4A634;
+      --gold-light: #FFD080;
+      --gold-pale: #FFF3D6;
+      --amber: #E8870A;
+      --dark: #0F0A02;
+      --dark-2: #1A1206;
+      --mid: #2D2010;
+      --text: #F7EDD8;
+      --muted: #A89070;
+      --white: #FFFDF7;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--dark);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* CUSTOM CURSOR */
+    .cursor {
+      width: 12px; height: 12px;
+      background: var(--gold);
+      border-radius: 50%;
+      position: fixed; top: 0; left: 0;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.1s, width 0.2s, height 0.2s, background 0.2s;
+      mix-blend-mode: screen;
+    }
+    .cursor-ring {
+      width: 36px; height: 36px;
+      border: 1.5px solid var(--gold);
+      border-radius: 50%;
+      position: fixed; top: 0; left: 0;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: transform 0.18s ease, width 0.25s, height 0.25s, opacity 0.2s;
+      opacity: 0.5;
+    }
+    body:hover .cursor-ring { opacity: 0.7; }
+
+    /* NOISE OVERLAY */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 1000;
+      opacity: 0.35;
+    }
+
+    /* ── HERO / BANNER ── */
+    .hero {
+      min-height: 100vh;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 60% 30%, #F4A63422 0%, transparent 70%),
+        radial-gradient(ellipse 40% 50% at 20% 70%, #E8870A18 0%, transparent 60%),
+        linear-gradient(160deg, #0F0A02 0%, #1A1206 40%, #0A0600 100%);
+      z-index: 0;
+    }
+
+    /* Decorative arcs */
+    .hero-arc {
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .arc-1 {
+      width: 700px; height: 700px;
+      border-color: rgba(244,166,52,0.08);
+      top: -200px; right: -100px;
+      animation: spin 60s linear infinite;
+    }
+    .arc-2 {
+      width: 500px; height: 500px;
+      border-color: rgba(244,166,52,0.05);
+      top: -100px; right: 50px;
+      animation: spin 40s linear infinite reverse;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Floating particles */
+    .particles { position: absolute; inset: 0; z-index: 0; }
+    .particle {
+      position: absolute;
+      width: 3px; height: 3px;
+      background: var(--gold);
+      border-radius: 50%;
+      opacity: 0;
+      animation: float-up var(--dur) ease-in infinite;
+      animation-delay: var(--delay);
+      left: var(--left);
+      bottom: 0;
+    }
+    @keyframes float-up {
+      0% { opacity: 0; transform: translateY(0) scale(1); }
+      10% { opacity: 0.7; }
+      90% { opacity: 0.2; }
+      100% { opacity: 0; transform: translateY(-100vh) scale(0.3); }
+    }
+
+    .hero-content {
+      position: relative; z-index: 2;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      align-items: end;
+      min-height: 100vh;
+    }
+
+    .hero-text-side {
+      padding: 10vh 5vw 10vh 8vw;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .hero-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.25em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 2rem;
+      opacity: 0;
+      animation: fade-up 0.8s 0.3s forwards;
+    }
+
+    .hero-name {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3.5rem, 7vw, 7rem);
+      font-weight: 900;
+      line-height: 0.9;
+      color: var(--white);
+      margin-bottom: 0.3rem;
+      opacity: 0;
+      animation: fade-up 0.9s 0.5s forwards;
+    }
+    .hero-name span {
+      color: var(--gold);
+      display: block;
+      font-style: italic;
+    }
+
+    .hero-tagline {
+      font-family: 'DM Sans', sans-serif;
+      font-size: clamp(1rem, 1.5vw, 1.25rem);
+      color: var(--muted);
+      font-weight: 300;
+      margin-top: 1.5rem;
+      max-width: 380px;
+      line-height: 1.7;
+      opacity: 0;
+      animation: fade-up 0.9s 0.7s forwards;
+    }
+
+    .hero-cta {
+      margin-top: 3rem;
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fade-up 0.9s 0.9s forwards;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.85rem 2rem;
+      border-radius: 3px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-decoration: none;
+      transition: all 0.3s;
+      cursor: none;
+    }
+    .btn-primary {
+      background: var(--gold);
+      color: var(--dark);
+      font-weight: 700;
+    }
+    .btn-primary:hover {
+      background: var(--gold-light);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(244,166,52,0.35);
+    }
+    .btn-outline {
+      border: 1px solid rgba(244,166,52,0.4);
+      color: var(--gold);
+      background: transparent;
+    }
+    .btn-outline:hover {
+      border-color: var(--gold);
+      background: rgba(244,166,52,0.07);
+      transform: translateY(-2px);
+    }
+
+    /* PHOTO SIDE */
+    .hero-photo-side {
+      position: relative;
+      height: 100vh;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .photo-frame {
+      position: relative;
+      width: 75%;
+      max-width: 420px;
+      margin-bottom: 0;
+      opacity: 0;
+      animation: fade-in-photo 1.2s 0.4s forwards;
+    }
+    @keyframes fade-in-photo {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .photo-frame img {
+      width: 100%;
+      display: block;
+      object-fit: cover;
+      object-position: top;
+      height: 80vh;
+      filter: contrast(1.05) brightness(0.95) saturate(1.1);
+    }
+
+    /* Gold tint overlay on photo */
+    .photo-frame::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(
+        to bottom,
+        transparent 40%,
+        rgba(15,10,2,0.6) 80%,
+        rgba(15,10,2,0.95) 100%
+      );
+      pointer-events: none;
+    }
+
+    .photo-border {
+      position: absolute;
+      top: 20px; left: -20px;
+      right: 20px; bottom: -20px;
+      border: 1px solid rgba(244,166,52,0.2);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .photo-accent {
+      position: absolute;
+      bottom: 40px; right: -30px;
+      width: 80px; height: 80px;
+      background: var(--gold);
+      opacity: 0.12;
+      clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+    }
+
+    /* Gold dot grid background */
+    .dot-grid {
+      position: absolute;
+      top: 15%; left: -10%;
+      width: 200px; height: 200px;
+      background-image: radial-gradient(circle, rgba(244,166,52,0.3) 1px, transparent 1px);
+      background-size: 18px 18px;
+      opacity: 0.4;
+      z-index: 0;
+    }
+
+    /* SCROLL INDICATOR */
+    .scroll-hint {
+      position: absolute;
+      bottom: 2.5rem;
+      left: 8vw;
+      z-index: 3;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      opacity: 0;
+      animation: fade-up 1s 1.3s forwards;
+    }
+    .scroll-line {
+      width: 40px; height: 1px;
+      background: var(--gold);
+      position: relative;
+      overflow: hidden;
+    }
+    .scroll-line::after {
+      content: '';
+      position: absolute;
+      left: -100%; top: 0;
+      width: 100%; height: 100%;
+      background: var(--white);
+      animation: slide-right 2s 2s infinite;
+    }
+    @keyframes slide-right {
+      0% { left: -100%; } 100% { left: 100%; }
+    }
+    .scroll-hint span {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    /* ── STATS BAR ── */
+    .stats-bar {
+      position: relative; z-index: 2;
+      background: rgba(244,166,52,0.06);
+      border-top: 1px solid rgba(244,166,52,0.12);
+      border-bottom: 1px solid rgba(244,166,52,0.12);
+      display: flex;
+      justify-content: center;
+      gap: 0;
+    }
+    .stat-item {
+      flex: 1;
+      max-width: 220px;
+      padding: 2rem 1.5rem;
+      text-align: center;
+      border-right: 1px solid rgba(244,166,52,0.1);
+      transition: background 0.3s;
+    }
+    .stat-item:last-child { border-right: none; }
+    .stat-item:hover { background: rgba(244,166,52,0.04); }
+    .stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--gold);
+      display: block;
+    }
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-top: 0.3rem;
+    }
+
+    /* ── SECTIONS COMMON ── */
+    section { padding: 7rem 8vw; }
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      margin-bottom: 4rem;
+    }
+    .section-num {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--gold);
+      opacity: 0.6;
+    }
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      font-weight: 700;
+      color: var(--white);
+    }
+    .section-title em {
+      font-style: italic;
+      color: var(--gold);
+    }
+    .section-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(to right, rgba(244,166,52,0.3), transparent);
+    }
+
+    /* ── ABOUT ── */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 6rem;
+      align-items: center;
+    }
+    .about-text p {
+      font-size: 1.05rem;
+      line-height: 1.85;
+      color: rgba(247,237,216,0.8);
+      margin-bottom: 1.5rem;
+    }
+    .about-text p strong {
+      color: var(--gold);
+      font-weight: 500;
+    }
+    .about-values {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.2rem;
+      margin-top: 2.5rem;
+    }
+    .value-chip {
+      padding: 0.9rem 1.2rem;
+      border: 1px solid rgba(244,166,52,0.15);
+      border-radius: 2px;
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      transition: all 0.3s;
+    }
+    .value-chip:hover {
+      border-color: rgba(244,166,52,0.5);
+      background: rgba(244,166,52,0.04);
+      transform: translateX(4px);
+    }
+    .value-icon { font-size: 1.2rem; }
+    .value-text { font-size: 0.85rem; color: var(--muted); }
+
+    .about-visual {
+      position: relative;
+    }
+    .about-img-wrap {
+      position: relative;
+      overflow: hidden;
+    }
+    .about-img-wrap img {
+      width: 100%;
+      height: 500px;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
+      filter: grayscale(20%) contrast(1.05);
+      transition: filter 0.5s;
+    }
+    .about-img-wrap:hover img { filter: grayscale(0%) contrast(1.08); }
+    .about-img-wrap::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(244,166,52,0.15) 0%, transparent 60%);
+      z-index: 1;
+      pointer-events: none;
+    }
+    .about-quote {
+      position: absolute;
+      bottom: -2rem; left: -2rem;
+      background: var(--dark-2);
+      border: 1px solid rgba(244,166,52,0.2);
+      padding: 1.5rem 2rem;
+      max-width: 280px;
+      z-index: 2;
+    }
+    .about-quote p {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 0.95rem;
+      color: var(--gold-light);
+      line-height: 1.6;
+    }
+
+    /* ── SKILLS / PASSIONS ── */
+    .passions-bg {
+      background: var(--dark-2);
+    }
+    .passions-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5px;
+      background: rgba(244,166,52,0.08);
+    }
+    .passion-card {
+      background: var(--dark-2);
+      padding: 3rem 2.5rem;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.4s;
+      cursor: none;
+    }
+    .passion-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 3px;
+      background: linear-gradient(to right, var(--gold), transparent);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.4s;
+    }
+    .passion-card:hover::before { transform: scaleX(1); }
+    .passion-card:hover { background: rgba(244,166,52,0.03); }
+    .passion-card:hover .passion-num { opacity: 0.15; }
+
+    .passion-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 5rem;
+      font-weight: 900;
+      color: var(--gold);
+      opacity: 0.06;
+      position: absolute;
+      top: -1rem; right: 1.5rem;
+      line-height: 1;
+      transition: opacity 0.4s;
+    }
+    .passion-icon { font-size: 2rem; margin-bottom: 1.2rem; }
+    .passion-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 0.8rem;
+    }
+    .passion-desc {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    /* ── SOCIAL / CONNECT ── */
+    .connect-intro {
+      max-width: 600px;
+      margin-bottom: 4rem;
+    }
+    .connect-intro p {
+      font-size: 1.1rem;
+      line-height: 1.8;
+      color: rgba(247,237,216,0.75);
+    }
+    .social-links {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.2rem;
+    }
+    .social-card {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      padding: 1.8rem 2rem;
+      border: 1px solid rgba(244,166,52,0.12);
+      text-decoration: none;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.35s;
+      group: true;
+      cursor: none;
+    }
+    .social-card::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: var(--gold);
+      transform: translateX(-101%);
+      transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
+      z-index: 0;
+    }
+    .social-card:hover::before { transform: translateX(0); }
+    .social-card:hover { border-color: var(--gold); }
+    .social-card:hover .social-icon,
+    .social-card:hover .social-name,
+    .social-card:hover .social-handle,
+    .social-card:hover .social-arrow { color: var(--dark) !important; }
+
+    .social-icon {
+      font-size: 1.8rem;
+      position: relative; z-index: 1;
+      transition: color 0.35s;
+    }
+    .social-info { flex: 1; position: relative; z-index: 1; }
+    .social-name {
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 500;
+      color: var(--white);
+      transition: color 0.35s;
+      font-size: 0.95rem;
+    }
+    .social-handle {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-top: 0.2rem;
+      transition: color 0.35s;
+    }
+    .social-arrow {
+      font-size: 1.2rem;
+      color: rgba(244,166,52,0.4);
+      position: relative; z-index: 1;
+      transition: color 0.35s, transform 0.3s;
+    }
+    .social-card:hover .social-arrow { transform: translate(4px, -4px); }
+
+    /* ── CONTACT / FOOTER ── */
+    footer {
+      background: var(--dark-2);
+      border-top: 1px solid rgba(244,166,52,0.1);
+      padding: 5rem 8vw 3rem;
+    }
+    .footer-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 3rem;
+      margin-bottom: 4rem;
+      flex-wrap: wrap;
+    }
+    .footer-brand .name {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--white);
+    }
+    .footer-brand .name span { color: var(--gold); }
+    .footer-brand .tagline {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-top: 0.5rem;
+    }
+    .footer-contact h4 {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+    .footer-contact a {
+      display: block;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+      transition: color 0.2s;
+    }
+    .footer-contact a:hover { color: var(--gold); }
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(244,166,52,0.08);
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .footer-bottom p {
+      font-size: 0.78rem;
+      color: var(--muted);
+      font-family: 'Space Mono', monospace;
+    }
+    .footer-bottom p a { color: var(--gold); text-decoration: none; }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fade-up {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .hero-content { grid-template-columns: 1fr; }
+      .hero-photo-side { height: 55vw; min-height: 280px; }
+      .hero-text-side { padding: 6vh 6vw; order: 2; }
+      .hero-photo-side { order: 1; }
+      .about-grid { grid-template-columns: 1fr; gap: 3rem; }
+      .about-visual { order: -1; }
+      .about-quote { display: none; }
+      .passions-grid { grid-template-columns: 1fr 1fr; }
+      section { padding: 5rem 6vw; }
+      .stats-bar { flex-wrap: wrap; }
+    }
+    @media (max-width: 600px) {
+      .passions-grid { grid-template-columns: 1fr; }
+      .about-values { grid-template-columns: 1fr; }
+      .footer-top { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Custom cursor -->
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- ═══════════ HERO ═══════════ -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-arc arc-1"></div>
+    <div class="hero-arc arc-2"></div>
+    <div class="particles" id="particles"></div>
+    <div class="dot-grid"></div>
+
+    <div class="hero-content">
+      <!-- TEXT -->
+      <div class="hero-text-side">
+        <p class="hero-label">✦ Personal Portfolio</p>
+        <h1 class="hero-name">
+          Mulindwa
+          <span>Victor</span>
+        </h1>
+        <p class="hero-tagline">
+          Creator. Thinker. Visionary. — Building experiences that matter, one moment at a time.
+        </p>
+        <div class="hero-cta">
+          <a href="#connect" class="btn btn-primary">Connect with me →</a>
+          <a href="#about" class="btn btn-outline">Who am I?</a>
+        </div>
+      </div>
+
+      <!-- PHOTO -->
+      <div class="hero-photo-side">
+        <div class="photo-frame">
+          <img src="b2b391f7-7aa8-487c-a544-0e5651402936.jpg" alt="Mulindwa Victor" id="heroPhoto"/>
+          <div class="photo-border"></div>
+          <div class="photo-accent"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="scroll-hint">
+      <div class="scroll-line"></div>
+      <span>Scroll to explore</span>
+    </div>
+  </section>
+
+  <!-- ═══════════ STATS BAR ═══════════ -->
+  <div class="stats-bar">
+    <div class="stat-item reveal">
+      <span class="stat-num">∞</span>
+      <span class="stat-label">Ideas Daily</span>
+    </div>
+    <div class="stat-item reveal">
+      <span class="stat-num">100%</span>
+      <span class="stat-label">Authentic</span>
+    </div>
+    <div class="stat-item reveal">
+      <span class="stat-num">1</span>
+      <span class="stat-label">Unique Voice</span>
+    </div>
+    <div class="stat-item reveal">
+      <span class="stat-num">🔥</span>
+      <span class="stat-label">Always Grinding</span>
+    </div>
+  </div>
+
+  <!-- ═══════════ ABOUT ═══════════ -->
+  <section id="about">
+    <div class="section-header reveal">
+      <span class="section-num">01</span>
+      <h2 class="section-title">About <em>Me</em></h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="about-grid">
+      <div class="about-text reveal">
+        <p>
+          Hey — I'm <strong>Mulindwa Victor</strong>, a young creative with an unquenchable hunger to leave a mark on the world. I believe in doing things boldly, thinking independently, and building something real.
+        </p>
+        <p>
+          Whether it's a conversation, a project, or a random idea at 2AM — I show up <strong>fully</strong>. Life is too short for half-measures. I'm driven by curiosity, fuelled by passion, and grounded in authenticity.
+        </p>
+        <p>
+          This space is a reflection of who I am: someone who refuses to be ordinary.
+        </p>
+
+        <div class="about-values">
+          <div class="value-chip">
+            <span class="value-icon">⚡</span>
+            <span class="value-text">High Energy</span>
+          </div>
+          <div class="value-chip">
+            <span class="value-icon">🎯</span>
+            <span class="value-text">Goal-Driven</span>
+          </div>
+          <div class="value-chip">
+            <span class="value-icon">💡</span>
+            <span class="value-text">Creative Mind</span>
+          </div>
+          <div class="value-chip">
+            <span class="value-icon">🌍</span>
+            <span class="value-text">Global Vision</span>
+          </div>
+          <div class="value-chip">
+            <span class="value-icon">🤝</span>
+            <span class="value-text">Community First</span>
+          </div>
+          <div class="value-chip">
+            <span class="value-icon">📚</span>
+            <span class="value-text">Always Learning</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="about-visual reveal">
+        <div class="about-img-wrap">
+          <img src="your-photo.jpg" alt="Victor" id="aboutPhoto"/>
+        </div>
+        <div class="about-quote">
+          <p>"The world belongs to those who dare to dream and act."</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ PASSIONS ═══════════ -->
+  <section class="passions-bg" id="passions">
+    <div class="section-header reveal">
+      <span class="section-num">02</span>
+      <h2 class="section-title">What I'm <em>About</em></h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="passions-grid reveal">
+      <div class="passion-card">
+        <span class="passion-num">01</span>
+        <div class="passion-icon">🚀</div>
+        <h3 class="passion-title">Ambition & Growth</h3>
+        <p class="passion-desc">Every single day is an opportunity to become a better version of myself. I chase growth relentlessly — in skills, character, and impact.</p>
+      </div>
+      <div class="passion-card">
+        <span class="passion-num">02</span>
+        <div class="passion-icon">🎨</div>
+        <h3 class="passion-title">Creativity</h3>
+        <p class="passion-desc">I see art in everything — in ideas, in conversations, in how a moment unfolds. Creativity isn't a skill; it's a lens I use to see the world.</p>
+      </div>
+      <div class="passion-card">
+        <span class="passion-num">03</span>
+        <div class="passion-icon">🌟</div>
+        <h3 class="passion-title">Making an Impact</h3>
+        <p class="passion-desc">I want to leave people and places better than I found them. Real success is measured in lives touched, not just achievements unlocked.</p>
+      </div>
+      <div class="passion-card">
+        <span class="passion-num">04</span>
+        <div class="passion-icon">📱</div>
+        <h3 class="passion-title">Digital & Tech</h3>
+        <p class="passion-desc">The internet is the greatest equaliser of our generation. I'm learning to harness it to build, create, and connect across borders.</p>
+      </div>
+      <div class="passion-card">
+        <span class="passion-num">05</span>
+        <div class="passion-icon">🎵</div>
+        <h3 class="passion-title">Music & Culture</h3>
+        <p class="passion-desc">Music speaks what words cannot. I'm deeply woven into the cultural fabric of my community, and proud of every thread.</p>
+      </div>
+      <div class="passion-card">
+        <span class="passion-num">06</span>
+        <div class="passion-icon">💬</div>
+        <h3 class="passion-title">Real Conversations</h3>
+        <p class="passion-desc">Nothing beats a conversation that challenges you, expands your thinking, and leaves you different. I live for those moments.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ CONNECT ═══════════ -->
+  <section id="connect">
+    <div class="section-header reveal">
+      <span class="section-num">03</span>
+      <h2 class="section-title">Let's <em>Connect</em></h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="connect-intro reveal">
+      <p>Find me across the internet. I'm always open to new connections, collaborations, and conversations that matter. Come say hi — I don't bite. 😄</p>
+    </div>
+
+    <div class="social-links reveal">
+      <a href="https://instagram.com/" target="_blank" class="social-card">
+        <span class="social-icon">📸</span>
+        <div class="social-info">
+          <div class="social-name">Instagram</div>
+          <div class="social-handle">@mulindwa.victor</div>
+        </div>
+        <span class="social-arrow">↗</span>
+      </a>
+
+      <a href="https://twitter.com/" target="_blank" class="social-card">
+        <span class="social-icon">𝕏</span>
+        <div class="social-info">
+          <div class="social-name">X / Twitter</div>
+          <div class="social-handle">@MulindwaVictor</div>
+        </div>
+        <span class="social-arrow">↗</span>
+      </a>
+
+      <a href="https://tiktok.com/" target="_blank" class="social-card">
+        <span class="social-icon">🎵</span>
+        <div class="social-info">
+          <div class="social-name">TikTok</div>
+          <div class="social-handle">@mulindwav</div>
+        </div>
+        <span class="social-arrow">↗</span>
+      </a>
+
+      <a href="https://facebook.com/" target="_blank" class="social-card">
+        <span class="social-icon">📘</span>
+        <div class="social-info">
+          <div class="social-name">Facebook</div>
+          <div class="social-handle">Mulindwa Victor</div>
+        </div>
+        <span class="social-arrow">↗</span>
+      </a>
+
+      <a href="https://youtube.com/" target="_blank" class="social-card">
+        <span class="social-icon">▶️</span>
+        <div class="social-info">
+          <div class="social-name">YouTube</div>
+          <div class="social-handle">Mulindwa Victor</div>
+        </div>
+        <span class="social-arrow">↗</span>
+      </a>
+
+      <a href="https://linkedin.com/" target="_blank" class="social-card">
+        <span class="social-icon">💼</span>
+        <div class="social-info">
+          <div class="social-name">LinkedIn</div>
+          <div class="social-handle">Mulindwa Victor</div>
+        </div>
+        <span class="social-arrow">↗</span>
+      </a>
+
+      <a href="https://wa.me/" target="_blank" class="social-card">
+        <span class="social-icon">💬</span>
+        <div class="social-info">
+          <div class="social-name">WhatsApp</div>
+          <div class="social-handle">Chat with me</div>
+        </div>
+        <span class="social-arrow">↗</span>
+      </a>
+
+      <a href="mailto:victor@email.com" class="social-card">
+        <span class="social-icon">✉️</span>
+        <div class="social-info">
+          <div class="social-name">Email</div>
+          <div class="social-handle">victor@email.com</div>
+        </div>
+        <span class="social-arrow">↗</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- ═══════════ FOOTER ═══════════ -->
+  <footer>
+    <div class="footer-top">
+      <div class="footer-brand reveal">
+        <div class="name">Mulindwa <span>Victor</span></div>
+        <div class="tagline">Creator. Thinker. Visionary.</div>
+      </div>
+      <div class="footer-contact reveal">
+        <h4>Get in Touch</h4>
+        <a href="mailto:victor@email.com">victor@email.com</a>
+        <a href="https://instagram.com/" target="_blank">Instagram</a>
+        <a href="https://twitter.com/" target="_blank">Twitter / X</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 Mulindwa Victor. All rights reserved.</p>
+      <p>Designed with ♥ and ambition</p>
+    </div>
+  </footer>
+
+  <script>
+
+    // CURSOR
+    const cursor = document.getElementById('cursor');
+    const ring = document.getElementById('cursorRing');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+    (function animCursor() {
+      cursor.style.left = mx + 'px';
+      cursor.style.top = my + 'px';
+      rx += (mx - rx) * 0.12;
+      ry += (my - ry) * 0.12;
+      ring.style.left = rx + 'px';
+      ring.style.top = ry + 'px';
+      requestAnimationFrame(animCursor);
+    })();
+    document.querySelectorAll('a, .btn, .passion-card, .social-card, .value-chip').forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        cursor.style.width = '20px'; cursor.style.height = '20px';
+        ring.style.width = '54px'; ring.style.height = '54px';
+      });
+      el.addEventListener('mouseleave', () => {
+        cursor.style.width = '12px'; cursor.style.height = '12px';
+        ring.style.width = '36px'; ring.style.height = '36px';
+      });
+    });
+
+    // PARTICLES
+    const particlesEl = document.getElementById('particles');
+    for (let i = 0; i < 18; i++) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      p.style.setProperty('--left', Math.random() * 100 + '%');
+      p.style.setProperty('--dur', (8 + Math.random() * 12) + 's');
+      p.style.setProperty('--delay', (Math.random() * 15) + 's');
+      p.style.width = p.style.height = (1.5 + Math.random() * 3) + 'px';
+      particlesEl.appendChild(p);
+    }
+
+    // SCROLL REVEAL
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach((e, i) => {
+        if (e.isIntersecting) {
+          setTimeout(() => e.target.classList.add('visible'), i * 80);
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    reveals.forEach(el => observer.observe(el));
+
+    // PHOTO FALLBACK — beautiful monogram shown while / if photo doesn't load
+    // To use your photo: save it as "your-photo.jpg" in the same folder as this HTML file
+    document.querySelectorAll('#heroPhoto, #aboutPhoto').forEach(img => {
+      const isHero = img.id === 'heroPhoto';
+      const h = isHero ? '80vh' : '500px';
+      const fallback = document.createElement('div');
+      fallback.style.cssText = `width:100%;height:${h};background:linear-gradient(160deg,#2D2010 0%,#1A1206 45%,#3D3015 100%);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;`;
+      fallback.innerHTML = `
+        <div style="position:absolute;width:340px;height:340px;border-radius:50%;border:1px solid rgba(244,166,52,0.08);top:50%;left:50%;transform:translate(-50%,-50%)"></div>
+        <div style="position:absolute;width:220px;height:220px;border-radius:50%;border:1px solid rgba(244,166,52,0.12);top:50%;left:50%;transform:translate(-50%,-50%)"></div>
+        <div style="text-align:center;position:relative;z-index:1;">
+          <div style="font-family:'Playfair Display',serif;font-size:5.5rem;font-weight:900;color:rgba(244,166,52,0.75);line-height:1;text-shadow:0 0 60px rgba(244,166,52,0.2);">MLV</div>
+          <div style="font-family:'Space Mono',monospace;font-size:0.6rem;letter-spacing:0.3em;color:rgba(168,144,112,0.7);text-transform:uppercase;margin-top:0.7rem;">Digital Solutions</div>
+        </div>`;
+      img.onerror = function() { this.replaceWith(fallback); };
+    });
+
+    // SMOOTH SCROLL
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        const target = document.querySelector(a.getAttribute('href'));
+        if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+      });
+    });
+  </script>
+</body>
+</html>
