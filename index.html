@@ -687,7 +687,6 @@
     /* ── RESPONSIVE ── */
     @media (max-width: 900px) {
       .hero-content { grid-template-columns: 1fr; }
-      .hero-photo-side { height: 55vw; min-height: 280px; }
       .hero-text-side { padding: 6vh 6vw; order: 2; }
       .hero-photo-side { order: 1; }
       .about-grid { grid-template-columns: 1fr; gap: 3rem; }
@@ -701,6 +700,23 @@
       .passions-grid { grid-template-columns: 1fr; }
       .about-values { grid-template-columns: 1fr; }
       .footer-top { flex-direction: column; }
+.hero-photo-side {
+  height: auto;
+  padding-top: 20px;
+}
+
+.photo-frame {
+  width: 80%;
+  margin: auto;
+}
+
+.photo-frame img {
+  width: 100%;
+  height: auto;
+  max-height: 400px;
+  object-fit: cover;
+  object-position: center;
+}
     }
   </style>
 </head>
